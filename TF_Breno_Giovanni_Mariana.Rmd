@@ -17,6 +17,7 @@ library(readr)
 library(rbcb)
 ```
 
+
  1)
  a) Baixando e modelando a base de dados
 ```{r}
@@ -63,15 +64,22 @@ ggplot(data = inf) +
 
 
 3)
+```{r}
+index <- list(4393)
+confidence <- get_series(index, start_date = "2011-12-01", end_date = "2024-04-30", as = c("data.frame"))
+colnames(confidence)[2] <- "confidence"
 
+```
 erro em confidence!
+
+
 
 Baixando as variáveis:
 
 3.1) ipca
 ```{r}
 index <- list(433)
-ipca <- get_series(index, start_date = "2011-12-01", end_date = "2024-04-30", as = "data.frame")
+ipca <- get_series(index, start_date = "2011-12-01", end_date = "2024-04-30", as = c("data.frame"))
 colnames(ipca)[2] <- "ipca"
 
 ```
@@ -224,7 +232,7 @@ tcu <- tcu %>% select(date, tcu)
 
 ```{r}
 
-index <- list(27788)
+index <- list(22078)
 aggreg_wage <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
 
 # coluna a partir da qual computaremos a variação percentual
@@ -435,16 +443,42 @@ imports <- imports[-1, ]
 imports <- imports %>% select(date, imports)
 ```
 
+```{r}
+# alternative approach: use the table as csv file in a function
+
+# importing the variables table as csv file
+# Read the CSV file into R
+tabela <- read.csv("variaveis.csv", stringsAsFactors = FALSE)
+
+# Print the data to check
+print(tabela)
+baixa_series(tabela)
+```
 
 4)
 
 ```{r}
 X = cbind(ipca,
-igpm, ipca15, bm_broad,m1,icbr,ibcbr,pimpf,tcu,
-aggreg_wage,elec,
+igpm, 
+ipca15, 
+bm_broad,
+m1,
+icbr,
+ibcbr,
+pimpf,
+tcu,
+aggreg_wage,
+elec,
 #confidence,
-brl_usd,selic,saving, cred,net_debt_gdp,
-primary,current_account,trade_balance,imports)
+brl_usd,
+selic,
+saving, 
+cred,
+net_debt_gdp,
+primary,
+current_account,
+trade_balance,
+imports)
 
 View(X)
 
@@ -462,5 +496,52 @@ View(preditores_adicionais)
 X = cbind(preditores_adicionais, X)
 
 View(X)
+
+nomes <- colnames(X)
+X <- embed(X, 2)
+nomes <- paste0(rep(nomes, 2),"(-",rep(1:2, each = ncol(X)/2),")")
+colnames(X) <- nomes
 ```
+
+6)
+
+```{r}
+
+colnames(X)
+```
+
+
+7)
+
+```{r}
+
+dim(X)
+```
+
+```{r}
+
+y = inf$inf
+y_lags = embed(y, 3)[, -1]
+colnames(y_lags) = c("y(-1)", "y(-2)")
+
+```
+
+8)
+
+```{r}
+X <- X[-1, ]
+y <- y[-2, ]
+
+X <- rbind(X, y_lags)
+
+View(X)
+```
+
+9)
+
+```{r}
+inf <- inf[-2, ]
+View(inf)
+```
+
 

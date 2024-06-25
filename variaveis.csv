@@ -1,0 +1,22 @@
+Nome,Codigo SGS,Atraso,Transformacao
+ipca,433,1,-
+igpm,189,1,-
+ipca15,7478,1,-
+bm_broad,1833,2,Variacao percentual
+m1,27788,1,Variacao percentual
+icbr,27574,1,Variacao percentual
+ibcbr,24363,2,Variacao percentual
+pimpf,21859,2,Variacao percentual
+tcu,24352,2,Primeira diferenca
+aggreg_wage,22078,2,Variacao percentual
+elec,1406,2,Variacao percentual
+confidence,4390,2,Variacao percentual
+brl_usd,3695,1,Variacao percentual
+selic,432,1,Variacao percentual
+saving,1835,1,Variacao percentual
+cred,20611,2,Variacao percentual
+net_debt_gdp,4513,2,Primeira diferenca
+primary,4649,2,Primeira diferenca
+current_account,22701,2,Primeira diferenca
+trade_balance,22704,2,Variacao percentual
+imports,22709,2,Variacao percentual
