@@ -1,6 +1,6 @@
 ---
 title: "Trabalho_Final_ML"
-author: "Breno, Giovanny e Mariana"
+author: "Breno, Giovanni e Mariana"
 date: "2024-06-20"
 output: pdf_document
 ---
@@ -13,6 +13,8 @@ Pacotes necessários:
 ```{r}
 library(tidyverse)
 library(sidrar)
+library(readr)
+library(rbcb)
 ```
 
  1)
@@ -38,6 +40,8 @@ head(inf)
 ```{r}
 tail(inf)
 ```
+
+
 2) Gerando estatísticas descritivas:
 ```{r}
 mean(inf$inf)
@@ -57,4 +61,406 @@ ggplot(data = inf) +
   theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5),plot.background = element_rect(fill = "white")) 
 ```
 
- 
+
+3)
+
+erro em confidence!
+
+Baixando as variáveis:
+
+3.1) ipca
+```{r}
+index <- list(433)
+ipca <- get_series(index, start_date = "2011-12-01", end_date = "2024-04-30", as = "data.frame")
+colnames(ipca)[2] <- "ipca"
+
+```
+
+3.2) igpm
+
+```{r}
+index <- list(189)
+igpm <- get_series(index, start_date = "2011-12-01", end_date = "2024-04-30", as = "data.frame")
+colnames(igpm)[2] <- "igpm"
+
+```
+
+3.3) ipca15
+
+```{r}
+index <- list(7478)
+ipca15 <- get_series(index, start_date = "2011-12-01", end_date = "2024-04-30", as = "data.frame")
+colnames(ipca15)[2] <- "ipca15"
+
+```
+
+3.4) bm_broad
+
+```{r}
+
+index <- list(1833)
+bm_broad <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+
+colnames(bm_broad)[2] <- "bm_broad_old"
+bm_broad$bm_broad <- rep(NA, nrow(bm_broad))
+
+for (t in 2:nrow(bm_broad)) {
+bm_broad$bm_broad[t] <- ((bm_broad$bm_broad_old[t] - bm_broad$bm_broad_old[t-1])/bm_broad$bm_broad_old[t-1])*100
+}
+
+bm_broad <- bm_broad[-1, ]
+bm_broad <- bm_broad %>% select(date, bm_broad)
+
+```
+
+3.5) m1
+
+
+```{r}
+
+index <- list(27788)
+m1 <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+
+# coluna a partir da qual computaremos a variação percentual
+colnames(m1)[2] <- "m1_old"
+# coluna que receberá o resultado da variação percentual
+m1$m1 <- rep(NA, nrow(m1))
+# calculamos a variação percentual a partir da segunda linha
+for (t in 2:nrow(m1)) {
+m1$m1[t] <- ((m1$m1_old[t] - m1$m1_old[t-1])/m1$m1_old[t-1])*100
+}
+
+m1 <- m1[-1, ]
+m1 <- m1 %>% select(date, m1)
+
+```
+
+3.6) icbr
+
+
+```{r}
+
+index <- list(27574)
+icbr <- get_series(index, start_date = "2011-11-01", end_date = "2024-04-30", as = "data.frame")
+
+# coluna a partir da qual computaremos a variação percentual
+colnames(icbr)[2] <- "icbr_old"
+# coluna que receberá o resultado da variação percentual
+icbr$icbr <- rep(NA, nrow(icbr))
+# calculamos a variação percentual a partir da segunda linha
+for (t in 2:nrow(icbr)) {
+icbr$icbr[t] <- ((icbr$icbr_old[t] - icbr$icbr_old[t-1])/icbr$icbr_old[t-1])*100
+}
+
+icbr <- icbr[-1, ]
+icbr <- icbr %>% select(date, icbr)
+
+```
+
+3.7) ibcbr
+
+
+```{r}
+
+index <- list(24363)
+ibcbr <- get_series(index, start_date = "2011-09-01", end_date = "2024-02-29", as = "data.frame")
+
+# coluna a partir da qual computaremos a variação percentual
+colnames(ibcbr)[2] <- "ibcbr_old"
+# coluna que receberá o resultado da variação percentual
+ibcbr$ibcbr <- rep(NA, nrow(ibcbr))
+# calculamos a variação percentual a partir da segunda linha
+for (t in 2:nrow(ibcbr)) {
+ibcbr$ibcbr[t] <- ((ibcbr$ibcbr_old[t] - ibcbr$ibcbr_old[t-1])/ibcbr$ibcbr_old[t-1])*100
+}
+
+ibcbr <- ibcbr[-1, ]
+ibcbr <- ibcbr %>% select(date, ibcbr)
+
+```
+
+3.8) pimpf
+
+```{r}
+
+index <- list(21859)
+pimpf <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+
+# coluna a partir da qual computaremos a variação percentual
+colnames(pimpf)[2] <- "pimpf_old"
+pimpf$pimpf <- rep(NA, nrow(pimpf))
+
+for (t in 2:nrow(pimpf)) {
+pimpf$pimpf[t] <- ((pimpf$pimpf_old[t] - pimpf$pimpf_old[t-1])/pimpf$pimpf_old[t-1])*100
+}
+
+pimpf <- pimpf[-1, ]
+pimpf <- pimpf %>% select(date, pimpf)
+
+```
+
+3.9) tcu
+
+```{r}
+
+index <- list(24352)
+tcu <- get_series(index, start_date = "2011-11-01", end_date = "2024-04-30", as = "data.frame")
+
+# coluna a partir da qual computaremos a variação percentual
+colnames(tcu)[2] <- "tcu_old"
+tcu$tcu <- rep(NA, nrow(tcu))
+
+for (t in 2:nrow(tcu)) {
+tcu$tcu[t] <- (tcu$tcu_old[t] - tcu$tcu_old[t-1])
+}
+
+tcu <- tcu[-1, ]
+tcu <- tcu %>% select(date, tcu)
+
+```
+
+3.10) aggreg_wage
+
+
+```{r}
+
+index <- list(27788)
+aggreg_wage <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+
+# coluna a partir da qual computaremos a variação percentual
+colnames(aggreg_wage)[2] <- "aggreg_wage_old"
+# coluna que receberá o resultado da variação percentual
+aggreg_wage$aggreg_wage <- rep(NA, nrow(aggreg_wage))
+# calculamos a variação percentual a partir da segunda linha
+for (t in 2:nrow(aggreg_wage)) {
+aggreg_wage$aggreg_wage[t] <- ((aggreg_wage$aggreg_wage_old[t] - aggreg_wage$aggreg_wage_old[t-1])/aggreg_wage$aggreg_wage_old[t-1])*100
+}
+
+aggreg_wage <- aggreg_wage[-1, ]
+aggreg_wage <- aggreg_wage %>% select(date, aggreg_wage)
+
+```
+
+3.11) elec
+
+
+```{r}
+index <- list(1406)
+elec <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+
+colnames(elec)[2] <- "elec_old"
+
+elec$elec <- rep(NA, nrow(elec))
+
+for (t in 2:nrow(elec)) {
+  elec$elec[t] <- ((elec$elec_old[t] - elec$elec_old[t-1]) / elec$elec_old[t-1]) * 100
+}
+
+elec <- elec[-1, ]
+
+elec <- elec %>% select(date, elec)
+```
+
+3.12) confidence
+
+
+```{r}
+index <- list(4393)
+confidence <- get_series(index, start_date = "2011-11-01", end_date = "2024-03-31", as = "data.frame")
+
+colnames(confidence)[2] <- "confidence_old"
+confidence$confidence <- rep(NA, nrow(confidence))
+
+for (t in 2:nrow(confidence)) {
+  confidence$confidence[t] <- ((confidence$confidence_old[t] - confidence$confidence_old[t-1]) / confidence$confidence_old[t-1]) * 100
+}
+
+confidence <- confidence[-1, ]
+confidence <- confidence %>% select(date, confidence)
+```
+
+3.13) brl_usd
+
+
+```{r}
+
+index <- list(3695)
+brl_usd <- get_series(index, start_date = "2011-11-01", end_date = "2024-04-30", as = "data.frame")
+
+colnames(brl_usd)[2] <- "brl_usd_old"
+brl_usd$brl_usd <- rep(NA, nrow(brl_usd))
+
+for (t in 2:nrow(brl_usd)) {
+  brl_usd$brl_usd[t] <- ((brl_usd$brl_usd_old[t] - brl_usd$brl_usd_old[t-1]) / brl_usd$brl_usd_old[t-1]) * 100
+}
+
+brl_usd <- brl_usd[-1, ]
+brl_usd <- brl_usd %>% select(date, brl_usd)
+
+```
+
+3.14) selic
+```{r}
+index <- list(4390)
+selic <- get_series(index, start_date = "2011-12-01", end_date = "2024-04-30", as = "data.frame")
+colnames(selic)[2] <- "selic"
+
+```
+
+3.15) saving
+
+```{r}
+
+index <- list(1835)
+saving <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+
+colnames(saving)[2] <- "saving_old"
+saving$saving <- rep(NA, nrow(saving))
+
+for (t in 2:nrow(saving)) {
+  saving$saving[t] <- ((saving$saving_old[t] - saving$saving_old[t-1]) / saving$saving_old[t-1]) * 100
+}
+
+saving <- saving[-1, ]
+saving <- saving %>% select(date, saving)
+
+```
+
+3.16) cred
+
+```{r}
+index <- list(20539)
+cred <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+
+colnames(cred)[2] <- "cred_old"
+cred$cred <- rep(NA, nrow(cred))
+
+for (t in 2:nrow(cred)) {
+  cred$cred[t] <- ((cred$cred_old[t] - cred$cred_old[t-1]) / cred$cred_old[t-1]) * 100
+}
+
+cred <- cred[-1, ]
+cred <- cred %>% select(date, cred)
+```
+
+3.17) net_debt_gdp
+
+```{r}
+index <- list(4513)
+net_debt_gdp <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+
+colnames(net_debt_gdp)[2] <- "net_debt_gdp_old"
+net_debt_gdp$net_debt_gdp <- rep(NA, nrow(net_debt_gdp))
+
+for (t in 2:nrow(net_debt_gdp)) {
+ net_debt_gdp$net_debt_gdp[t] <- (net_debt_gdp$net_debt_gdp_old[t] - net_debt_gdp$net_debt_gdp_old[t-1])
+}
+
+net_debt_gdp <- net_debt_gdp[-1, ]
+net_debt_gdp <- net_debt_gdp %>% select(date, net_debt_gdp)
+```
+
+3.18) primary
+
+```{r}
+
+index <- list(4649)
+
+primary <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+
+colnames(primary)[2] <- "primary_old"
+primary$primary <- rep(NA, nrow(primary))
+
+for (t in 2:nrow(primary)) {
+  primary$primary[t] <- (primary$primary_old[t] - primary$primary_old[t-1])
+}
+
+primary <- primary[-1, ]
+primary <- primary %>% select(date, primary)
+```
+
+3.19) current_account
+
+
+```{r}
+
+index <- list(22701)
+current_account <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+
+colnames(current_account)[2] <- "current_account_old"
+current_account$current_account <- rep(NA, nrow(current_account))
+
+for (t in 2:nrow(current_account)) {
+  current_account$current_account[t] <- (current_account$current_account_old[t] - current_account$current_account_old[t-1])
+}
+
+current_account <- current_account[-1, ]
+current_account <- current_account %>% select(date, current_account)
+```
+
+3.20) trade_balance
+
+
+```{r}
+index <- list(22704)
+trade_balance <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+
+colnames(trade_balance)[2] <- "trade_balance_old"
+trade_balance$trade_balance <- rep(NA, nrow(trade_balance))
+
+for (t in 2:nrow(trade_balance)) {
+  trade_balance$trade_balance[t] <- ((trade_balance$trade_balance_old[t] - trade_balance$trade_balance_old[t-1]) / trade_balance$trade_balance_old[t-1]) * 100
+}
+
+trade_balance <- trade_balance[-1, ]
+trade_balance <- trade_balance %>% select(date, trade_balance)
+```
+
+3.21) imports
+
+
+
+```{r}
+index <- list(22709)
+imports <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+
+colnames(imports)[2] <- "imports_old"
+imports$imports <- rep(NA, nrow(imports))
+
+for (t in 2:nrow(imports)) {
+  imports$imports[t] <- ((imports$imports_old[t] - imports$imports_old[t-1]) / imports$imports_old[t-1]) * 100
+}
+
+imports <- imports[-1, ]
+imports <- imports %>% select(date, imports)
+```
+
+
+4)
+
+```{r}
+X = cbind(ipca,
+igpm, ipca15, bm_broad,m1,icbr,ibcbr,pimpf,tcu,
+aggreg_wage,elec,
+#confidence,
+brl_usd,selic,saving, cred,net_debt_gdp,
+primary,current_account,trade_balance,imports)
+
+View(X)
+
+X = X %>% 
+  select(-date)
+```
+
+5)
+
+```{r}
+
+preditores_adicionais <- read_csv2("preditores_adicionais.csv")
+View(preditores_adicionais)
+
+X = cbind(preditores_adicionais, X)
+
+View(X)
+```
+
