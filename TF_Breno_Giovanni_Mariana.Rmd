@@ -274,7 +274,7 @@ elec <- elec %>% select(date, elec)
 
 ```{r}
 index <- list(4393)
-confidence <- get_series(index, start_date = "2011-11-01", end_date = "2024-03-31", as = "data.frame")
+confidence <- get_series(index, start_date = "2011-11-01", end_date = "2024-04-30", as = "data.frame")
 
 colnames(confidence)[2] <- "confidence_old"
 confidence$confidence <- rep(NA, nrow(confidence))
@@ -459,6 +459,7 @@ baixa_series(tabela)
 
 ```{r}
 X = cbind(ipca,
+<<<<<<< HEAD
 igpm, 
 ipca15, 
 bm_broad,
@@ -479,6 +480,12 @@ primary,
 current_account,
 trade_balance,
 imports)
+=======
+igpm, ipca15, bm_broad,m1,icbr,ibcbr,pimpf,tcu,
+aggreg_wage,elec, confidence,
+brl_usd,selic,saving, cred,net_debt_gdp,
+primary,current_account,trade_balance,imports)
+>>>>>>> 7153a545ecb863488f1d629222572e5e6ef41d31
 
 View(X)
 

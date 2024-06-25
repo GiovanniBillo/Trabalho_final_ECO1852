@@ -1,5 +1,5 @@
 ### funcoes auxiliarias ###
-
+# por importar dados talvez è melhor ter algumas funcoes auxiliarias, jà que o procedimento è repetitivo
 primeira_diferenca <- function(serie){
   for (t in 2:nrow(serie)) {
     serie$serie[t] <- (serie$serie_old[t] - serie$serie_old[t-1])
