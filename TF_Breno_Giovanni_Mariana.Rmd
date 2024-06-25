@@ -1,0 +1,60 @@
+---
+title: "Trabalho_Final_ML"
+author: "Breno, Giovanny e Mariana"
+date: "2024-06-20"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Pacotes necessários:
+```{r}
+library(tidyverse)
+library(sidrar)
+```
+
+ 1)
+ a) Baixando e modelando a base de dados
+```{r}
+inf <- get_sidra(1737,variable = 63, period = "201201-202405")
+
+inf <- inf %>% select("Mês (Código)", "Valor")
+
+colnames(inf) <- c("date", "inf")
+
+inf$date <- as.Date(paste0(str_sub(inf$date, end = 4),"-",
+str_sub(inf$date, start = 5),"-01"))
+
+```
+ 
+```{r}
+dim(inf)
+```
+```{r}
+head(inf)
+```
+```{r}
+tail(inf)
+```
+2) Gerando estatísticas descritivas:
+```{r}
+mean(inf$inf)
+median(inf$inf)
+min(inf$inf)
+max(inf$inf)
+sd(inf$inf)
+```
+Gerando o gráfico da série histórica da inflação:
+```{r}
+ggplot(data = inf) +
+  geom_line(aes(x = date, y = inf)) +
+  labs(x = "Anos", y = "Inflação",title = "Série da inflação mensal brasileira desde 2012", caption = "Fonte: Sidra IBGE") +
+  theme_minimal() +
+  scale_y_continuous(breaks = seq(-1, 2, by = 0.5)) +
+  scale_x_date(date_breaks = "2 years") +
+  theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5),plot.background = element_rect(fill = "white")) 
+```
+
+ 
