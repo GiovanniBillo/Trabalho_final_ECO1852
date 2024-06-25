@@ -127,7 +127,7 @@ bm_broad <- bm_broad %>% select(date, bm_broad)
 ```{r}
 
 index <- list(27788)
-m1 <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+m1 <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-01", as = "data.frame")
 
 # coluna a partir da qual computaremos a variação percentual
 colnames(m1)[2] <- "m1_old"
@@ -393,7 +393,7 @@ primary <- primary %>% select(date, primary)
 ```{r}
 
 index <- list(22701)
-current_account <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+current_account <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-01", as = "data.frame")
 
 colnames(current_account)[2] <- "current_account_old"
 current_account$current_account <- rep(NA, nrow(current_account))
@@ -426,8 +426,6 @@ trade_balance <- trade_balance %>% select(date, trade_balance)
 
 3.21) imports
 
-
-
 ```{r}
 index <- list(22709)
 imports <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
@@ -459,7 +457,6 @@ baixa_series(tabela)
 
 ```{r}
 X = cbind(ipca,
-<<<<<<< HEAD
 igpm, 
 ipca15, 
 bm_broad,
@@ -470,7 +467,7 @@ pimpf,
 tcu,
 aggreg_wage,
 elec,
-#confidence,
+confidence,
 brl_usd,
 selic,
 saving, 
@@ -480,12 +477,6 @@ primary,
 current_account,
 trade_balance,
 imports)
-=======
-igpm, ipca15, bm_broad,m1,icbr,ibcbr,pimpf,tcu,
-aggreg_wage,elec, confidence,
-brl_usd,selic,saving, cred,net_debt_gdp,
-primary,current_account,trade_balance,imports)
->>>>>>> 7153a545ecb863488f1d629222572e5e6ef41d31
 
 View(X)
 

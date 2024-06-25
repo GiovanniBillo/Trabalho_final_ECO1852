@@ -30,8 +30,16 @@ baixa_series <- function(tabela) {
   for (i in seq_along(tabela$Nome)) {
     index <- tabela$Codigo.SGS[i]
     
-    serie <- get_series_safe(index, start_date = "2011-10-01", end_date = "2024-03-31")
-    
+    if (tabela$Atraso[i] == 2){
+      serie <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+    }
+    else if (tabela$Atraso[i] == 1){
+      serie <- get_series(index, start_date = "2011-11-01", end_date = "2024-04-30", as = "data.frame")
+
+    }
+    else{
+      serie <- get_series(index, start_date = "2011-09-01", end_date = "2024-02-29", as = "data.frame")
+    }
     if (ncol(serie) != 2) {
       warning("Skipping index ", index, " due to unexpected number of columns")
       next  # Skip to the next iteration
