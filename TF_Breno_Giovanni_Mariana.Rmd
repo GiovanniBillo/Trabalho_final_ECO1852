@@ -524,18 +524,18 @@ colnames(y_lags) = c("y(-1)", "y(-2)")
 
 ```{r}
 X <- X[-1, ]
-y <- y[-2, ]
 
-X <- rbind(X, y_lags)
+X <- cbind(y_lags,X)
 
-View(X)
+print(X)
 ```
 
 9)
 
 ```{r}
-inf <- inf[-2, ]
-View(inf)
+y <- y[-c(1,2)]
+dim(y)
+print(y)
 ```
 
 
