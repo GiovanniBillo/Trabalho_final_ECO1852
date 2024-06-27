@@ -61,18 +61,9 @@ ggplot(data = inf) +
   scale_x_date(date_breaks = "2 years") +
   theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5),plot.background = element_rect(fill = "white")) 
 ```
-
+Observamos que a inflação brasileira variou em torno de sua média de aproximadamente 0.5% ao mês desde jan 2012 até maio 2024, tendo seu período de maior volatilidade ao longo de 2022.
 
 3)
-```{r}
-index <- list(4393)
-confidence <- get_series(index, start_date = "2011-12-01", end_date = "2024-04-30", as = c("data.frame"))
-colnames(confidence)[2] <- "confidence"
-
-```
-erro em confidence!
-
-
 
 Baixando as variáveis:
 
@@ -233,7 +224,7 @@ tcu <- tcu %>% select(date, tcu)
 ```{r}
 
 index <- list(22078)
-aggreg_wage <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+aggreg_wage <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-01", as = "data.frame")
 
 # coluna a partir da qual computaremos a variação percentual
 colnames(aggreg_wage)[2] <- "aggreg_wage_old"
@@ -454,7 +445,7 @@ baixa_series(tabela)
 ```
 
 4)
-
+Retiramos a variável de salário médio por conta de falta de dados recentes
 ```{r}
 X = cbind(ipca,
 igpm, 
@@ -465,7 +456,7 @@ icbr,
 ibcbr,
 pimpf,
 tcu,
-aggreg_wage,
+'aggreg_wage',
 elec,
 confidence,
 brl_usd,
@@ -478,44 +469,49 @@ current_account,
 trade_balance,
 imports)
 
-View(X)
+print(X)
 
-X = X %>% 
-  select(-date)
 ```
 
 5)
 
+
 ```{r}
-
 preditores_adicionais <- read_csv2("preditores_adicionais.csv")
-View(preditores_adicionais)
-
-X = cbind(preditores_adicionais, X)
-
-View(X)
-
-nomes <- colnames(X)
-X <- embed(X, 2)
-nomes <- paste0(rep(nomes, 2),"(-",rep(1:2, each = ncol(X)/2),")")
-colnames(X) <- nomes
+print(preditores_adicionais)
 ```
 
-6)
 
 ```{r}
+X = cbind(preditores_adicionais, X)
+print(X)
+```
+6)
+Acrescentando defasagens aos preditores:
+```{r}
+X = X %>% 
+  select(-date)
 
-colnames(X)
+nomes <- colnames(X)
+
+X <- as.matrix(X)
+X <- embed(X, 2)
+nomes <- paste0(rep(nomes, 2),"-",rep(1:2, each = ncol(X)/2))
+colnames(X) <- nomes
+
+X <- as.data.frame(X)
+X <- X %>% select(-`expec-2`)
+X <- X %>% rename(expec = `expec-1`)
+print(colnames(X))
 ```
 
 
 7)
 
 ```{r}
-
 dim(X)
 ```
-
+8)
 ```{r}
 
 y = inf$inf
@@ -524,7 +520,7 @@ colnames(y_lags) = c("y(-1)", "y(-2)")
 
 ```
 
-8)
+
 
 ```{r}
 X <- X[-1, ]
