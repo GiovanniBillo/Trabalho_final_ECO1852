@@ -524,6 +524,7 @@ print(X)
 
 ```{r}
 y <- y[-c(1,2)]
+y = as.matrix(y)
 dim(y)
 print(y)
 ```
