@@ -55,11 +55,14 @@ Gerando o gráfico da série histórica da inflação:
 ```{r}
 ggplot(data = inf) +
   geom_line(aes(x = date, y = inf)) +
-  labs(x = "Anos", y = "Inflação",title = "Série da inflação mensal brasileira desde 2012", caption = "Fonte: Sidra IBGE") +
+  labs(x = "Anos", y = "Inflação",title = "Série da inflação mensal 
+       brasileira desde 2012", caption = "Fonte: Sidra IBGE") +
   theme_minimal() +
   scale_y_continuous(breaks = seq(-1, 2, by = 0.5)) +
   scale_x_date(date_breaks = "2 years") +
-  theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5),plot.background = element_rect(fill = "white")) 
+  theme(plot.title = element_text(hjust = 0.5), 
+        plot.subtitle = element_text(hjust = 0.5),
+        plot.background = element_rect(fill = "white")) 
 ```
 Observamos que a inflação brasileira variou em torno de sua média de aproximadamente 0.5% ao mês desde jan 2012 até maio 2024, tendo seu período de maior volatilidade ao longo de 2022.
 
@@ -70,7 +73,8 @@ Baixando as variáveis:
 3.1) ipca
 ```{r}
 index <- list(433)
-ipca <- get_series(index, start_date = "2011-12-01", end_date = "2024-04-30", as = c("data.frame"))
+ipca <- get_series(index, start_date = "2011-12-01", end_date = "2024-04-30",
+                   as = c("data.frame"))
 colnames(ipca)[2] <- "ipca"
 
 ```
@@ -79,7 +83,8 @@ colnames(ipca)[2] <- "ipca"
 
 ```{r}
 index <- list(189)
-igpm <- get_series(index, start_date = "2011-12-01", end_date = "2024-04-30", as = "data.frame")
+igpm <- get_series(index, start_date = "2011-12-01", end_date = "2024-04-30",
+                   as = "data.frame")
 colnames(igpm)[2] <- "igpm"
 
 ```
@@ -98,7 +103,8 @@ colnames(ipca15)[2] <- "ipca15"
 ```{r}
 
 index <- list(1833)
-bm_broad <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+bm_broad <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31",
+                       as = "data.frame")
 
 colnames(bm_broad)[2] <- "bm_broad_old"
 bm_broad$bm_broad <- rep(NA, nrow(bm_broad))
@@ -224,7 +230,8 @@ tcu <- tcu %>% select(date, tcu)
 ```{r}
 
 index <- list(22078)
-aggreg_wage <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-01", as = "data.frame")
+aggreg_wage <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-01", 
+                          as = "data.frame")
 
 # coluna a partir da qual computaremos a variação percentual
 colnames(aggreg_wage)[2] <- "aggreg_wage_old"
@@ -232,7 +239,8 @@ colnames(aggreg_wage)[2] <- "aggreg_wage_old"
 aggreg_wage$aggreg_wage <- rep(NA, nrow(aggreg_wage))
 # calculamos a variação percentual a partir da segunda linha
 for (t in 2:nrow(aggreg_wage)) {
-aggreg_wage$aggreg_wage[t] <- ((aggreg_wage$aggreg_wage_old[t] - aggreg_wage$aggreg_wage_old[t-1])/aggreg_wage$aggreg_wage_old[t-1])*100
+aggreg_wage$aggreg_wage[t] <- ((aggreg_wage$aggreg_wage_old[t] - 
+                                  aggreg_wage$aggreg_wage_old[t-1])/ aggreg_wage$aggreg_wage_old[t-1])*100
 }
 
 aggreg_wage <- aggreg_wage[-1, ]
@@ -245,7 +253,8 @@ aggreg_wage <- aggreg_wage %>% select(date, aggreg_wage)
 
 ```{r}
 index <- list(1406)
-elec <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", as = "data.frame")
+elec <- get_series(index, start_date = "2011-10-01", end_date = "2024-03-31", 
+                   as = "data.frame")
 
 colnames(elec)[2] <- "elec_old"
 
@@ -271,7 +280,8 @@ colnames(confidence)[2] <- "confidence_old"
 confidence$confidence <- rep(NA, nrow(confidence))
 
 for (t in 2:nrow(confidence)) {
-  confidence$confidence[t] <- ((confidence$confidence_old[t] - confidence$confidence_old[t-1]) / confidence$confidence_old[t-1]) * 100
+  confidence$confidence[t] <-
+    ((confidence$confidence_old[t] - confidence$confidence_old[t-1])/confidence$confidence_old[t-1]) * 100
 }
 
 confidence <- confidence[-1, ]
@@ -290,7 +300,8 @@ colnames(brl_usd)[2] <- "brl_usd_old"
 brl_usd$brl_usd <- rep(NA, nrow(brl_usd))
 
 for (t in 2:nrow(brl_usd)) {
-  brl_usd$brl_usd[t] <- ((brl_usd$brl_usd_old[t] - brl_usd$brl_usd_old[t-1]) / brl_usd$brl_usd_old[t-1]) * 100
+  brl_usd$brl_usd[t] <- ((brl_usd$brl_usd_old[t] - brl_usd$brl_usd_old[t-1]) 
+                         / brl_usd$brl_usd_old[t-1]) * 100
 }
 
 brl_usd <- brl_usd[-1, ]
@@ -317,7 +328,8 @@ colnames(saving)[2] <- "saving_old"
 saving$saving <- rep(NA, nrow(saving))
 
 for (t in 2:nrow(saving)) {
-  saving$saving[t] <- ((saving$saving_old[t] - saving$saving_old[t-1]) / saving$saving_old[t-1]) * 100
+  saving$saving[t] <- ((saving$saving_old[t] - saving$saving_old[t-1]) 
+                       / saving$saving_old[t-1]) * 100
 }
 
 saving <- saving[-1, ]
@@ -335,7 +347,8 @@ colnames(cred)[2] <- "cred_old"
 cred$cred <- rep(NA, nrow(cred))
 
 for (t in 2:nrow(cred)) {
-  cred$cred[t] <- ((cred$cred_old[t] - cred$cred_old[t-1]) / cred$cred_old[t-1]) * 100
+  cred$cred[t] <- ((cred$cred_old[t] - cred$cred_old[t-1]) 
+                   / cred$cred_old[t-1]) * 100
 }
 
 cred <- cred[-1, ]
@@ -352,7 +365,8 @@ colnames(net_debt_gdp)[2] <- "net_debt_gdp_old"
 net_debt_gdp$net_debt_gdp <- rep(NA, nrow(net_debt_gdp))
 
 for (t in 2:nrow(net_debt_gdp)) {
- net_debt_gdp$net_debt_gdp[t] <- (net_debt_gdp$net_debt_gdp_old[t] - net_debt_gdp$net_debt_gdp_old[t-1])
+ net_debt_gdp$net_debt_gdp[t] <- (net_debt_gdp$net_debt_gdp_old[t] 
+                                  - net_debt_gdp$net_debt_gdp_old[t-1])
 }
 
 net_debt_gdp <- net_debt_gdp[-1, ]
@@ -390,7 +404,8 @@ colnames(current_account)[2] <- "current_account_old"
 current_account$current_account <- rep(NA, nrow(current_account))
 
 for (t in 2:nrow(current_account)) {
-  current_account$current_account[t] <- (current_account$current_account_old[t] - current_account$current_account_old[t-1])
+  current_account$current_account[t] <- 
+    (current_account$current_account_old[t] - current_account$current_account_old[t-1])
 }
 
 current_account <- current_account[-1, ]
@@ -408,7 +423,9 @@ colnames(trade_balance)[2] <- "trade_balance_old"
 trade_balance$trade_balance <- rep(NA, nrow(trade_balance))
 
 for (t in 2:nrow(trade_balance)) {
-  trade_balance$trade_balance[t] <- ((trade_balance$trade_balance_old[t] - trade_balance$trade_balance_old[t-1]) / trade_balance$trade_balance_old[t-1]) * 100
+  trade_balance$trade_balance[t] <- 
+    ((trade_balance$trade_balance_old[t] -
+        trade_balance$trade_balance_old[t-1]) / trade_balance$trade_balance_old[t-1]) * 100
 }
 
 trade_balance <- trade_balance[-1, ]
@@ -425,7 +442,8 @@ colnames(imports)[2] <- "imports_old"
 imports$imports <- rep(NA, nrow(imports))
 
 for (t in 2:nrow(imports)) {
-  imports$imports[t] <- ((imports$imports_old[t] - imports$imports_old[t-1]) / imports$imports_old[t-1]) * 100
+  imports$imports[t] <- ((imports$imports_old[t] -
+                            imports$imports_old[t-1]) / imports$imports_old[t-1]) * 100
 }
 
 imports <- imports[-1, ]
