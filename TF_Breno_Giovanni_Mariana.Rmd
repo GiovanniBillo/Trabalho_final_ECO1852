@@ -432,18 +432,6 @@ imports <- imports[-1, ]
 imports <- imports %>% select(date, imports)
 ```
 
-```{r}
-# alternative approach: use the table as csv file in a function
-
-# importing the variables table as csv file
-# Read the CSV file into R
-tabela <- read.csv("variaveis.csv", stringsAsFactors = FALSE)
-
-# Print the data to check
-print(tabela)
-baixa_series(tabela)
-```
-
 4)
 Retiramos a variável de salário médio por conta de falta de dados recentes
 ```{r}
@@ -456,7 +444,7 @@ icbr,
 ibcbr,
 pimpf,
 tcu,
-'aggreg_wage',
+#'aggreg_wage',
 elec,
 confidence,
 brl_usd,
@@ -484,13 +472,15 @@ print(preditores_adicionais)
 
 ```{r}
 X = cbind(preditores_adicionais, X)
+
+X = X %>% 
+  select(-date)
 print(X)
+
 ```
 6)
 Acrescentando defasagens aos preditores:
 ```{r}
-X = X %>% 
-  select(-date)
 
 nomes <- colnames(X)
 
