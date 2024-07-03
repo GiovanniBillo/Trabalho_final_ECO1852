@@ -63,17 +63,6 @@ ggplot(data = inf) +
 ```
 
 
-3)
-```{r}
-index <- list(4393)
-confidence <- get_series(index, start_date = "2011-12-01", end_date = "2024-04-30", as = c("data.frame"))
-colnames(confidence)[2] <- "confidence"
-
-```
-erro em confidence!
-
-
-
 Baixando as variáveis:
 
 3.1) ipca
@@ -122,7 +111,6 @@ bm_broad <- bm_broad %>% select(date, bm_broad)
 ```
 
 3.5) m1
-
 
 ```{r}
 
@@ -456,7 +444,30 @@ baixa_series(tabela)
 4)
 
 ```{r}
-X = cbind(ipca,
+# X = merge(
+#   ipca$ipca, 
+#   igpm$igpm, 
+#   ipca15$ipca15, 
+#   bm_broad$bm_broad,
+#   m1$m1,
+#   icbr$icbr,
+#   ibcbr$ibcbr,
+#   pimpf$pimpf,
+#   tcu$tcu,
+#   # aggreg_wage$aggreg_wage, # Commented out as in the original script
+#   elec$elec,
+#   confidence$confidence,
+#   brl_usd$brl_usd,
+#   selic$selic,
+#   saving$saving, 
+#   cred$cred,
+#   net_debt_gdp$net_debt_gdp,
+#   primary$primary,
+#   current_account$current_account,
+#   trade_balance$trade_balance,
+#   imports$imports
+# )
+dfs = list(ipca,
 igpm, 
 ipca15, 
 bm_broad,
@@ -465,7 +476,7 @@ icbr,
 ibcbr,
 pimpf,
 tcu,
-aggreg_wage,
+# aggreg_wage,
 elec,
 confidence,
 brl_usd,
@@ -478,10 +489,11 @@ current_account,
 trade_balance,
 imports)
 
+X = Reduce(function(x, y) merge(x, y, by = "date", all = TRUE), dfs)
 View(X)
 
-X = X %>% 
-  select(-date)
+# X = X %>% 
+#   select(-date)
 ```
 
 5)
@@ -489,13 +501,18 @@ X = X %>%
 ```{r}
 
 preditores_adicionais <- read_csv2("preditores_adicionais.csv")
+preditores_adicionais$date <- as.Date(preditores_adicionais$date, format = "%d/%m/%Y")
+preditores_adicionais$date <- format(preditores_adicionais$date, format = "%Y-%m-%d")
+preditores_adicionais$date <- as.Date(preditores_adicionais$date, format = "%Y-%m-%d")
+class(preditores_adicionais$date)
 View(preditores_adicionais)
 
-X = cbind(preditores_adicionais, X)
-
+X <- merge(X, preditores_adicionais, by = "date", all.x = TRUE)
 View(X)
 
+X = X[, -1]
 nomes <- colnames(X)
+X = as.matrix(X)
 X <- embed(X, 2)
 nomes <- paste0(rep(nomes, 2),"(-",rep(1:2, each = ncol(X)/2),")")
 colnames(X) <- nomes
@@ -518,9 +535,13 @@ dim(X)
 
 ```{r}
 
-y = inf$inf
-y_lags = embed(y, 3)[, -1]
+y = inf
+y_lags = embed(y$inf, 3)[, -1]
 colnames(y_lags) = c("y(-1)", "y(-2)")
+y_lags = as.data.frame(y_lags)
+y_lags$date = inf$date[-c(1, 2)]
+
+merge(X, y_lags, by = "date", all.x = TRUE)
 
 ```
 
