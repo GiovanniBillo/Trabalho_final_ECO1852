@@ -1,0 +1,162 @@
+---
+title: "TF_Breno_Giovanni_Mariana_parte2"
+author: "Giovanni Billo"
+date: "2024-07-03"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1)
+```{r}
+#### PARTE 2 ####
+# Install and load necessary packages
+install.packages("glmnet")
+install.packages("randomForest")
+install.packages("forecast")
+install.packages("tidyverse")
+install.packages("xts")
+
+library(glmnet)
+library(randomForest)
+library(forecast)
+library(tidyverse)
+library(xts)
+
+# Define the rolling window size
+window_size <- 82
+
+# Prepare empty vectors to store the predictions and errors
+previsao_media_historica <- rep(NA, 65)
+previsao_ar2 <- rep(NA, 65)
+previsao_adalasso <- rep(NA, 65)
+previsao_rf <- rep(NA, 65)
+erro_media_historica <- rep(NA, 65)
+erro_ar2 <- rep(NA, 65)
+erro_adalasso <- rep(NA, 65)
+erro_rf <- rep(NA, 65)
+
+# Rolling window loop
+for (i in 1:65) {
+  # Define the indices for the training set
+  train_indices <- (i):(i + window_size - 1)
+  
+  # Define the test index
+  test_index <- i + window_size
+  
+  # X = as.numeric(X)
+  # y = as.numeric(y)
+  # Extract training and test sets
+  X_train <- X[train_indices, ] %>% select(-date)  # Remove date column
+  y_train <- y[train_indices, ] %>% select(-date)   # Remove date column
+  X_test <- X[test_index, ,drop = FALSE] %>% select(-date) 
+  y_test <- y[test_index, , drop = FALSE] %>% select(-date) 
+  
+  # browser()
+  # Adaptive Lasso
+  cv_fit <- cv.glmnet(as.matrix(X_train), as.matrix(y_train), alpha = 1)
+  fit_adalasso <- glmnet(as.matrix(X_train), as.matrix(y_train), alpha = 1, lambda = cv_fit$lambda.min)
+  pred_adalasso <- predict(fit_adalasso, as.matrix(X_test))
+  previsao_adalasso[i] <- pred_adalasso[[1]]
+  erro_adalasso[i] <- y_test$inf - pred_adalasso[[1]]
+  
+  
+  # Random Forest
+  fit_rf <- randomForest(X_train, as.vector(y_train$inf))
+  pred_rf <- predict(fit_rf, X_test)
+  previsao_rf[i] <- pred_rf[[1]]
+  erro_rf[i] <- y_test$inf - pred_rf[[1]]
+  
+  # browser()
+  # Historical Mean
+  mean_hist <- mean(y_train$inf)
+  previsao_media_historica[i] <- mean_hist
+  erro_media_historica[i] <- y_test$inf - mean_hist
+  
+  # AR(2) Model
+  ar_model <- Arima(y_train, order = c(2, 0, 0))
+  pred_ar2 <- forecast(ar_model, hn = 1)$mean
+  previsao_ar2[i] <- pred_ar2[1]
+  erro_ar2[i] <- y_test$inf - pred_ar2[1]
+}
+
+# Convert lists to data frames for analysis
+predictions <- data.frame(
+  Date = y$date[(window_size + 1):(window_size + 65)],
+  Actual = y[(window_size + 1):(window_size + 65), 2],
+  Media_Historica = previsao_media_historica,
+  AR2 = previsao_ar2,
+  AdaLASSO = previsao_adalasso,
+  Random_Forest = previsao_rf
+)
+
+errors <- data.frame(
+  Date = y$date[(window_size + 1):(window_size + 65)],
+   Media_Historica = erro_media_historica,
+  AR2 = erro_ar2,
+  AdaLASSO = erro_adalasso,
+  Random_Forest = erro_rf
+)
+
+# Print predictions and errors
+print(predictions)
+print(errors)
+
+```
+
+
+
+2)
+```{r}
+library(ggplot2)
+
+predictions_long <- predictions %>%
+  pivot_longer(cols = -Date, names_to = "Model", values_to = "Prediction")
+
+plot_prev = ggplot(predictions_long, aes(x = Date, y = Prediction, color = Model)) +
+  geom_line() +
+  geom_point(data = predictions, aes(x = Date, y = Actual), color = "black") +
+  labs(title = "Valores realizados vs previsões",
+       x = "Date",
+       y = "Value",
+       color = "Model") +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  scale_color_manual(values = c("Actual" = "black", "Media_Historica" = "red", "AR2" = "green", "AdaLASSO" = "blue", "Random_Forest" = "purple"))
+
+plot_prev
+
+```
+3)
+```{r}
+R2_oos = function(actual, model_predictions){
+  r2_oos = 1 - (sum((actual - model_predictions)^2))/sum((actual - mean(actual))^2)
+  return(r2_oos)
+}
+
+ar2_r2 = R2_oos(predictions$Actual, predictions$AR2)
+adalasso_r2 = R2_oos(predictions$Actual, predictions$AdaLASSO)
+rf_r2 = R2_oos(predictions$Actual, predictions$Random_Forest)
+
+```
+4)
+Os R2 fora da amostra são positivos.
+```{r}
+# Calculate MAE for each model
+mae_media_historica <- mean(abs(errors$Media_Historica))
+mae_ar2 <- mean(abs(errors$AR2))
+mae_adalasso <- mean(abs(errors$AdaLASSO))
+mae_rf <- mean(abs(errors$Random_Forest))
+
+# Combine the MAE results into a data frame for easy comparison
+mae_results <- data.frame(
+  Model = c("Media_Historica", "AR2", "AdaLASSO", "Random_Forest"),
+  MAE = c(mae_media_historica, mae_ar2, mae_adalasso, mae_rf)
+)
+
+# View the results
+print(mae_results)
+```
+Todos os metodos são melhores da media historica.

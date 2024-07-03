@@ -87,6 +87,18 @@ igpm <- get_series(index, start_date = "2011-12-01", end_date = "2024-04-30",
                    as = "data.frame")
 colnames(igpm)[2] <- "igpm"
 
+# response <- GET("https://api.bcb.gov.br/dados/serie/bcdata.sgs.189/dados", query = list(formato = "json", dataInicial = "01/12/2011", dataFinal = "30/04/2024"))
+# json_content <- content(response, as = "parsed", type = "application/json")
+# 
+# igpm = as.data.frame(json_content)
+# # Print the response for debugging purposes
+# print(content(response, as = "text"))
+# 
+# # Check if the response content type is JSON
+# if (http_type(response) != "application/json") {
+#   stop("API did not return JSON")
+# }
+
 ```
 
 3.3) ipca15
@@ -475,7 +487,7 @@ Retiramos a variável de salário médio por conta de falta de dados recentes
 #   trade_balance$trade_balance,
 #   imports$imports
 # )
-dfs = list(ipca,
+X = list(ipca,
 igpm, 
 ipca15, 
 bm_broad,
@@ -550,7 +562,7 @@ colnames(y_lags) = c("y(-1)", "y(-2)")
 y_lags = as.data.frame(y_lags)
 y_lags$date = inf$date[-c(1, 2)]
 
-merge(X, y_lags, by = "date", all.x = TRUE)
+# merge(X, y_lags, by = "date", all.x = TRUE)
 
 ```
 
@@ -567,10 +579,20 @@ print(X)
 9)
 
 ```{r}
-y <- y[-c(1,2)]
-y = as.matrix(y)
+y <- y[-c(1,2),]
+# y = as.matrix(y)
 dim(y)
 print(y)
 ```
 
+```{r}
+## salve arquivo excel por X e y
+install.packages("writexl")
+library(writexl)
 
+write_xlsx(X, "Preditores_X.xlsx")
+
+write_xlsx(y, "Predita_y.xlsx")
+
+X = as.matrix(X)
+```
