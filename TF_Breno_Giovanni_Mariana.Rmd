@@ -572,6 +572,8 @@ y_lags$date = inf$date[-c(1, 2)]
 X <- X[-1, ]
 
 X <- cbind(y_lags,X)
+X = X %>% 
+  select(-date)
 
 print(X)
 ```
@@ -587,7 +589,7 @@ print(y)
 
 ```{r}
 ## salve arquivo excel por X e y
-install.packages("writexl")
+#install.packages("writexl")
 library(writexl)
 
 write_xlsx(X, "Preditores_X.xlsx")

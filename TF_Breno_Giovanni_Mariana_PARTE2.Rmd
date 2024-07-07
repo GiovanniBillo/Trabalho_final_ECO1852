@@ -1,6 +1,6 @@
 ---
-title: "TF_Breno_Giovanni_Mariana_parte2"
-author: "Giovanni Billo"
+title: "Trabalho Final - Machine Learning - Parte 2"
+author: "Breno Avidos, Giovanni Billo e Mariana Martins"
 date: "2024-07-03"
 output: pdf_document
 ---
@@ -13,11 +13,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 #### PARTE 2 ####
 # Install and load necessary packages
-install.packages("glmnet")
-install.packages("randomForest")
-install.packages("forecast")
-install.packages("tidyverse")
-install.packages("xts")
+# install.packages("glmnet")
+# install.packages("randomForest")
+# install.packages("forecast")
+# install.packages("tidyverse")
+# install.packages("xts")
 
 library(glmnet)
 library(randomForest)
@@ -46,12 +46,12 @@ for (i in 1:65) {
   # Define the test index
   test_index <- i + window_size
   
-  # X = as.numeric(X)
+ #X = as.matrix(X)
   # y = as.numeric(y)
   # Extract training and test sets
-  X_train <- X[train_indices, ] %>% select(-date)  # Remove date column
+  X_train <- X[train_indices, ] #%>% select(-date)  # Remove date column
   y_train <- y[train_indices, ] %>% select(-date)   # Remove date column
-  X_test <- X[test_index, ,drop = FALSE] %>% select(-date) 
+  X_test <- X[test_index, ,drop = FALSE]# %>% select(-date) 
   y_test <- y[test_index, , drop = FALSE] %>% select(-date) 
   
   # browser()
@@ -140,9 +140,14 @@ ar2_r2 = R2_oos(predictions$Actual, predictions$AR2)
 adalasso_r2 = R2_oos(predictions$Actual, predictions$AdaLASSO)
 rf_r2 = R2_oos(predictions$Actual, predictions$Random_Forest)
 
+ar2_r2
+adalasso_r2
+rf_r2
+
 ```
 4)
-Os R2 fora da amostra são positivos.
+Os R2 fora da amostra de AR(2), adaLASSO e random forest são positivos. Assim, concluímos que os modelos/métodos são melhores do que a média histórica (benchmark) para prever a inflação. 
+
 ```{r}
 # Calculate MAE for each model
 mae_media_historica <- mean(abs(errors$Media_Historica))
@@ -159,4 +164,6 @@ mae_results <- data.frame(
 # View the results
 print(mae_results)
 ```
-Todos os metodos são melhores da media historica.
+
+5) Sabemos que quanto maior o R2 out-of-sample, melhor a performance. Dessa forma, temos que o método que melhor performou foi o adaLASSO (R2 = 0.7723762). Além disso, utilizamos o erro absoluto médio (MAE) para comparar os modelos. Temos que o menor erro absoluto médio é o do adaLASSO, fomentando a resposta de que esse modelo é o que performa melhor. 
+Intuitivamente, ao utilizarmos o adaLASSO, diferentemente dos demais métodos, podemos selecionar as variáveis que são efetivamente relevantes na previsão da inflação.
